@@ -25,19 +25,20 @@ class BaseDAO:
     @classmethod
     async def add(cls, **data):
         async with async_session_maker() as session:
-            stmt = insert(cls.model).values(**data)
+            stmt = insert(cls.model).values(**data).returning(cls.model)
 
-            await session.execute(stmt)
+            result = await session.execute(stmt)
             await session.commit()
 
+            return result
+
     @classmethod
-    async def update(cls, model_id: int, **data):
+    async def update(cls, model_id: int, user_id: int, **data):
         async with async_session_maker() as session:
             stmt = (
                 update(cls.model)
-                .where(cls.model.id == model_id)
-                .values(**data)
-                .returning(cls.model)
+                .where(cls.model.id == model_id, cls.model.author_id == user_id)
+                .values(**data).returning(cls.model)
             )
             result = await session.execute(stmt)
             await session.commit()
