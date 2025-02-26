@@ -1,4 +1,4 @@
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy import text, ForeignKey
 
 from datetime import datetime
@@ -19,5 +19,3 @@ class Post(Base):
     )
     is_published: Mapped[bool] = mapped_column(default=False)
     author_id: Mapped[int] = mapped_column(ForeignKey("user.id"))
-
-    author = relationship("User", back_populates="posts")

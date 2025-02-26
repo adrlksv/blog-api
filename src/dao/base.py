@@ -12,7 +12,7 @@ class BaseDAO:
             query = select(cls.model).filter_by(id=model_id)
             result = await session.execute(query)
 
-            return await result.scalar_one_or_none()
+            return result.scalar_one_or_none()
         
     @classmethod
     async def find_one_or_none(cls, **filter_by):
