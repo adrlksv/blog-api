@@ -1,0 +1,50 @@
+version: "3.8"
+services:
+  db:
+    image: postgres:13
+    container_name: blog_db
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASS}
+    ports:
+      - "5432:5432"
+    networks:
+      - blog_network
+    volumes:
+      - blog_db_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:6
+    container_name: blog_redis
+    ports:
+      - "6379:6379"
+    networks:
+      - blog_network
+
+  app:
+    build: .
+    container_name: blog_app
+    environment:
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASS=${DB_PASS}
+      - DB_HOST=db
+      - DB_PORT=5432
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    ports:
+      - "7000:7000"
+    depends_on:
+      - db
+      - redis
+    networks:
+      - blog_network
+    entrypoint: ["sh", "-c", "poetry run alembic upgrade head && poetry run uvicorn src.main:app --host 0.0.0.0 --port 7000"]
+
+networks:
+  blog_network:
+    driver: bridge
+
+volumes:
+  blog_db_data:

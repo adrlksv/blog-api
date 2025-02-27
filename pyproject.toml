@@ -5,7 +5,6 @@ description = ""
 authors = [
     {name = "adrlksv",email = "Qwerty123Andrey@bk.ru"}
 ]
-readme = "README.md"
 requires-python = ">=3.10,<4.0"
 dependencies = [
     "fastapi[all] (>=0.115.8,<0.116.0)",
@@ -20,7 +19,7 @@ dependencies = [
 ]
 
 [tool.poetry]
-packages = [{include = "blog_api", from = "src"}]
+packages = [{include = "src"}]
 
 
 [build-system]
