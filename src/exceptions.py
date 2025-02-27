@@ -31,3 +31,7 @@ class IncorrectTokenFormatException(BlogException):
 class UserIsNotPresentException(BlogException):
     status_code = status.HTTP_401_UNAUTHORIZED
     detail = ""
+
+class PostDeleteError(BlogException):
+    status_code = status.HTTP_409_CONFLICT
+    detail = "Post delete error"
