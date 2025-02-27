@@ -9,13 +9,15 @@ Blog API - это backend-приложение на FastAPI для управл�
 ## Переменные окружения
 
 Создайте *.env* файл, например:
-DB_NAME=your_db_name
-DB_USER=your_db_user
-DB_PASS=your_db_password
-DB_HOST=localhost
-DB_PORT=5432
-REDIS_HOST=localhost
-REDIS_PORT=6379
+- DB_NAME=your_db_name
+- DB_USER=your_db_user
+- DB_PASS=your_db_password
+- DB_HOST=localhost
+- DB_PORT=5432
+- REDIS_HOST=localhost
+- REDIS_PORT=6379
+- SECRET_KEY=your_secret_key
+- ALGORITHM=HS256
 
 ## Запуск приложения
 1. Склонируйте репозиторий и перейдите в директорию проекта:
