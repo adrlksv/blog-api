@@ -1,5 +1,7 @@
 from datetime import datetime, timedelta
 
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from jose import jwt 
 from passlib.context import CryptContext
 from pydantic import EmailStr
@@ -41,8 +43,11 @@ def create_refresh_token(data: dict) -> str:
     return encoded_jwt
 
 
-async def authenticate_user(email: EmailStr, password: str):
-    user = await UsersDAO.find_one_or_none(email=email)
+async def authenticate_user(email: EmailStr, password: str, session: AsyncSession):
+    user = await UsersDAO.find_one_or_none(
+        session=session,
+        email=email
+    )
     if not user:
         return None
     if not verify_password(password, user.hashed_password):

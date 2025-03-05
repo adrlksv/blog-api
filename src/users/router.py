@@ -1,5 +1,9 @@
 from fastapi import APIRouter, Request, Response, Depends
 
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from src.database import get_db
+
 from src.auth.auth import (
     authenticate_user, 
     create_access_token,
@@ -25,13 +29,14 @@ router = APIRouter(
 
 
 @router.post("/register")
-async def register_user(user_data: SUserRegister):
-    existing_user = await UsersDAO.find_one_or_none(email=user_data.email)
+async def register_user(user_data: SUserRegister, db: AsyncSession = Depends(get_db)):
+    existing_user = await UsersDAO.find_one_or_none(email=user_data.email, session=db)
     if existing_user:
         raise UserAlreadyExistsException
     
     hashed_password = get_password_hash(user_data.password)
     await UsersDAO.add(
+        session=db,
         email=user_data.email,
         username=user_data.username,
         first_name=user_data.first_name,
@@ -41,8 +46,12 @@ async def register_user(user_data: SUserRegister):
 
 
 @router.post("/login")
-async def login_user(response: Response, user_data: SUserLogin):
-    user = await authenticate_user(user_data.email, user_data.password)
+async def login_user(response: Response, user_data: SUserLogin, db: AsyncSession = Depends(get_db)):
+    user = await authenticate_user(
+        session=db,
+        email=user_data.email, 
+        password=user_data.password
+    )
     if not user:
         raise IncorrectEmailOrPasswordException
     
@@ -69,7 +78,11 @@ async def login_user(response: Response, user_data: SUserLogin):
 
 
 @router.post("/refresh")
-async def refresh_token(request: Request, response: Response):
+async def refresh_token(
+    request: Request, 
+    response: Response, 
+    db: AsyncSession = Depends(get_db)
+):
     refresh_token = request.cookies.get("refer_refresh_token")
     if not refresh_token:
         raise TokenAbsentException
