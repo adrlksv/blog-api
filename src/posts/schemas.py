@@ -1,6 +1,6 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class SPost(BaseModel):
-    title: str 
-    content: str
+    title: str = Field(..., max_length=50)
+    content: str = Field(..., max_length=500)
